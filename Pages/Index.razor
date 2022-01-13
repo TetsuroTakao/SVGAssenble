@@ -28,7 +28,7 @@ else
         for(var i = 155117; i < 155127; i++){
             SVGs.Add(new SVGIcon()
             {
-                URL="http://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
+                URL="https://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
                 ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ i.ToString() + ".png"
             });
             var res = await httpClient.GetStringAsync(SVGs.LastOrDefault()!.URL);
