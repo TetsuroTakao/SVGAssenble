@@ -24,6 +24,11 @@ else
     private MarkupString? currentXML {get; set; }
     protected override async Task OnInitializedAsync()
     {
+        try{
+
+        }catch(Exception ex){
+            currentXML =(MarkupString)ex.Message; 
+        }
         SVGs = await getSVGs();
     }
     async Task<List<SVGIcon>> getSVGs(){
