@@ -25,11 +25,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         try{
-
+            SVGs = await getSVGs();
         }catch(Exception ex){
             currentXML =(MarkupString)ex.Message; 
         }
-        SVGs = await getSVGs();
     }
     async Task<List<SVGIcon>> getSVGs(){
         HttpClient httpClient = new HttpClient();
@@ -37,7 +36,7 @@ else
         for(var i = 155117; i < 155127; i++){
             result.Add(new SVGIcon()
             {
-                URL="http://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
+                URL="https://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
                 ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ i.ToString() + ".png"
             });
             var res = await httpClient.GetStringAsync(result.LastOrDefault()!.URL);
