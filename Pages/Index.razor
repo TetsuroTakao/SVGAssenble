@@ -14,6 +14,7 @@ else
     {
         <div style="display:inline-block;">
             <img id="@svg.URL" src='@svg.imgSrc' style="width:100px;" onclick="selectImg(this)">
+            <span style="display:block;width:100%;text-align:center;cursor:pointer;" onclick="changeImg(this)">@svg.index.ToString()</span>
         </div>
     }
 }
@@ -22,12 +23,40 @@ else
 @code{
     private List<SVGIcon> SVGs = new List<SVGIcon>();
     private MarkupString? currentXML {get; set; }
+
+    [JSInvokable]
+    public static async Task<string> ReturnSVG(int index)
+    {
+        var result = new SVGIcon()
+            {
+                URL="https://cdn.onlinewebfonts.com/svg/download_"+ index.ToString() + ".svg",
+                ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ index.ToString() + ".png"
+            };
+        HttpClient httpClient = new HttpClient();
+        var res = await httpClient.GetStringAsync(result.URL);
+        if (string.IsNullOrEmpty(res))
+        {
+            @* some code *@
+        }
+        else
+        {
+            var xml = new System.Xml.XmlDocument();
+            xml.LoadXml(res);
+            var content = "";
+            if(xml.LastChild != null){
+                content = xml.LastChild.OuterXml;
+            }
+            result.XML= new MarkupString(content);
+        }
+        return result.imgSrc!.Value.ToString();
+    }
     protected override async Task OnInitializedAsync()
     {
         HttpClient httpClient = new HttpClient();
         for(var i = 155117; i < 155127; i++){
             SVGs.Add(new SVGIcon()
             {
+                index = i,
                 URL="https://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
                 ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ i.ToString() + ".png"
             });
@@ -50,6 +79,7 @@ else
     }
     public class SVGIcon
     {
+        public int index { get; set; }
         public string? URL { get; set; }
         public string? ViewURL { get; set; }
         public MarkupString? XML { get; set; }
