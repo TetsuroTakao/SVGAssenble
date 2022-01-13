@@ -24,18 +24,14 @@ else
     private MarkupString? currentXML {get; set; }
     protected override async Task OnInitializedAsync()
     {
-        SVGs = await getSVGs();
-    }
-    async Task<List<SVGIcon>> getSVGs(){
         HttpClient httpClient = new HttpClient();
-        var result = new List<SVGIcon>();
         for(var i = 155117; i < 155127; i++){
-            result.Add(new SVGIcon()
+            SVGs.Add(new SVGIcon()
             {
-                URL="http://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
+                URL="https://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
                 ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ i.ToString() + ".png"
             });
-            var res = await httpClient.GetStringAsync(result.LastOrDefault()!.URL);
+            var res = await httpClient.GetStringAsync(SVGs.LastOrDefault()!.URL);
             if (string.IsNullOrEmpty(res))
             {
                 @* some code *@
@@ -48,10 +44,9 @@ else
                 if(xml.LastChild != null){
                     content = xml.LastChild.OuterXml;
                 }
-                result.LastOrDefault()!.XML= new MarkupString(content);
+                SVGs.LastOrDefault()!.XML= new MarkupString(content);
             }
         }
-        return result;
     }
     public class SVGIcon
     {
