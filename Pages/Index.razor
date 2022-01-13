@@ -1,0 +1,64 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+<h1>Icon Fontsのアイコン一覧</h1>
+<div>Icon made from <a href="http://www.onlinewebfonts.com/icon"  target="new">Icon Fonts</a> is licensed by CC BY 3.0</div>
+<div>あなたのアイコンを作成して下さい.</div>
+@if (SVGs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var svg in SVGs)
+    {
+        <div style="display:inline-block;">
+            <img id="@svg.URL" src='@svg.imgSrc' style="width:100px;" onclick="selectImg(this)">
+        </div>
+    }
+}
+<div id="selectedImage" style="width:100%;text-align:center;border:4px dotted #0000ff;border-radius:10px; margin-top:2rem;"></div>
+<div id="message">@currentXML</div>
+@code{
+    private List<SVGIcon> SVGs = new List<SVGIcon>();
+    private MarkupString? currentXML {get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient httpClient = new HttpClient();
+        for(var i = 155117; i < 155127; i++){
+            SVGs.Add(new SVGIcon()
+            {
+                URL="http://cdn.onlinewebfonts.com/svg/download_"+ i.ToString() + ".svg",
+                ViewURL="https://pic.onlinewebfonts.com/svg/img_"+ i.ToString() + ".png"
+            });
+            var res = await httpClient.GetStringAsync(SVGs.LastOrDefault()!.URL);
+            if (string.IsNullOrEmpty(res))
+            {
+                @* some code *@
+            }
+            else
+            {
+                var xml = new System.Xml.XmlDocument();
+                xml.LoadXml(res);
+                var content = "";
+                if(xml.LastChild != null){
+                    content = xml.LastChild.OuterXml;
+                }
+                SVGs.LastOrDefault()!.XML= new MarkupString(content);
+                @* currentXML=SVGs[0].XML; *@
+            }
+        }
+    }
+    public class SVGIcon
+    {
+        public string? URL { get; set; }
+        public string? ViewURL { get; set; }
+        public MarkupString? XML { get; set; }
+        public MarkupString? imgSrc { 
+            get
+            {
+                return (MarkupString)("data:image/svg+xml;utf8," + XML);
+            }
+        }
+    }
+}
