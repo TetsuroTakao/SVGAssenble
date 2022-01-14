@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Index</PageTitle>
 <h1>Icon Fontsのアイコン一覧</h1>
@@ -10,9 +11,8 @@
 }
 else
 {
-    @foreach (var svg in SVGs)
-    {
-        <div style="display:inline-block;">
+    @foreach (var svg in SVGs){
+        <div style="display:inline-block;" id="@svg.index.ToString()">
             <img id="@svg.URL" src='@svg.imgSrc' style="width:100px;" onclick="selectImg(this)">
             <span style="display:block;width:100%;text-align:center;cursor:pointer;" onclick="changeImg(this)">@svg.index.ToString()</span>
         </div>
@@ -23,10 +23,10 @@ else
 @code{
     private List<SVGIcon> SVGs = new List<SVGIcon>();
     private MarkupString? currentXML {get; set; }
-
-    [JSInvokable]
+    [JSInvokable("ReturnSVG")]
     public static async Task<string> ReturnSVG(int index)
     {
+
         var result = new SVGIcon()
             {
                 URL="https://cdn.onlinewebfonts.com/svg/download_"+ index.ToString() + ".svg",
@@ -87,6 +87,7 @@ else
             get
             {
                 return (MarkupString)("data:image/svg+xml;utf8," + XML);
+                
             }
         }
     }

@@ -8,7 +8,7 @@ window.SetSignInText = () =>{
     }
     return res;
 }
-var currentUser = {imgXML:"",color:"",imgURL:"",id:""};
+var currentUser = {imgXML:"",color:"",imgURL:"",id:"",oldIndex:"",newIndex:""};
 function selectImg(img){
     currentUser.imgURL=img.id;
     while(document.getElementById("selectedImage").children.length > 0){
@@ -32,20 +32,39 @@ function selectImg(img){
     document.getElementById("selectedImage").lastChild.id="currentImg";
     document.getElementById("selectedImage").lastChild.style="width:200px;vertical-align:top;margin-top:3rem;margin-left:3rem;";
 }
-function changeImg(indexHolder){
-    var index = parseInt(indexHolder.innerHTML);
-    var res = prompt(index + "を何番のアイコンに変更しますか？");
+
+function changeImg(indexLabel){
+    var index = parseInt(indexLabel.innerHTML);
+    var res = prompt(index.toString() + "を何番のアイコンに変更しますか？");
     if(res != null){
         var i = parseInt(res);
         if(i > 0){
             index = i;
         }
     }
+    currentUser.oldIndex=indexLabel.innerHTML;
     DotNet.invokeMethodAsync('SVGAssenble', 'ReturnSVG', index).then(xml => {
-            if(xml != null){
-                document.querySelector("img[id*='"+indexHolder.innerHTML+"']").setAttribute("src",xml);
-            }
-        });
+        if(xml != null){
+            currentUser.imgXML=document.querySelector("img[id*='"+indexLabel.innerHTML+"']").getAttribute("src");
+            document.querySelector("img[id*='"+index+"']").setAttribute("src",currentUser.imgXML);
+            document.querySelector("img[id*='"+indexLabel.innerHTML+"']").setAttribute("src",xml);
+            currentUser.oldIndex=indexLabel.innerHTML;
+            currentUser.newIndex=index;
+        }
+    });
+}
+function changeIndex(){
+    var elements = document.querySelectorAll("span");
+    for (var i = 0; i < elements.length; i++) {
+        if(elements[i].innerHTML == currentUser.oldIndex){
+            elements[i].innerHTML = currentUser.oldIndex;
+            document.querySelector("div[id*='"+currentUser.oldIndex+"']").setAttribute("id",currentUser.newIndex);
+        }
+        if(elements[i].innerHTML == currentUser.newIndex){
+            elements[i].innerHTML = currentUser.oldIndex;
+            document.querySelector("div[id*='"+currentUser.oldIndex+"']").setAttribute("id",currentUser.newIndex);
+        }
+    }
 }
 function setColor(pen){
     var dataType = "data:image/svg+xml;utf8,";
