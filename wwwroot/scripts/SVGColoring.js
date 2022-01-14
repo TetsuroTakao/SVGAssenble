@@ -46,7 +46,7 @@ function changeImg(indexLabel){
     DotNet.invokeMethodAsync('SVGAssenble', 'ReturnSVG', index).then(xml => {
         if(xml != null){
             currentUser.imgXML=document.querySelector("img[id*='"+indexLabel.innerHTML+"']").getAttribute("src");
-            document.querySelector("img[id*='"+index+"']").setAttribute("src",currentUser.imgXML);
+            document.querySelector("img[id*='"+index+"']").setAttribute("src",document.querySelector("img[id*='"+indexLabel.innerHTML+"']").getAttribute("src"));
             document.querySelector("img[id*='"+indexLabel.innerHTML+"']").setAttribute("src",xml);
             currentUser.oldIndex=indexLabel.innerHTML;
             currentUser.newIndex=index;
